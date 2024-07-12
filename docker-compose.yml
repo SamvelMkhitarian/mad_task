@@ -1,0 +1,65 @@
+version: "3.7"
+
+services:
+  db_media:
+    image: postgres:13
+    env_file:
+      - .env.media
+    container_name: db_media
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  db_memes:
+    image: postgres:13
+    env_file:
+      - .env.memes
+    container_name: db_memes
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    command: server --address ":9000" --console-address ":9001" /data
+    env_file:
+      - .env.media
+    container_name: minio
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  memes:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    entrypoint: ./script_memes.sh
+    container_name: memes
+    env_file:
+      - .env.memes
+    volumes:
+      - /app/memes:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_memes
+
+  media:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    entrypoint: ./script_media.sh
+    container_name: media
+    env_file:
+      - .env.media
+    volumes:
+      - /app/media:/code
+    ports:
+      - "8001:8001"
+    depends_on:
+      - minio
+      - db_media
+
+volumes:
+  postgres_data:
+  minio_data:
