@@ -27,7 +27,7 @@ FastAPI для предоставления API для работы с колл�
 ## 💻 Запуск проекта
 Клонирование репозитория:
 ```bash
-git clone https://github.com/SamvelMhitaryan/mad.git
+git clone https://github.com/SamvelMhitaryan/mad_task.git
 cd madsoft
 ```
 
